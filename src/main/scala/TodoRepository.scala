@@ -16,23 +16,27 @@ trait TodoRepository {
 
 object TodoRepository {
 
-  final case class TodoNotFound(id: String) extends Exception(s"Todo with id ${id} not found.")
+  final case class TodoNotFound(id: String)
+      extends Exception(s"Todo with id ${id} not found.")
 }
 
 //Simulation of the repository for the sake of simplicity
-class InMemoryTodoRepository(initialTodos: Seq[Todo] = Seq.empty)(implicit ec: ExecutionContext)
-extends TodoRepository {
+class InMemoryTodoRepository(initialTodos: Seq[Todo] = Seq.empty)(
+  implicit ec: ExecutionContext
+) extends TodoRepository {
 
+  //To avoid doing real work and keep it simple
   private var todos: Vector[Todo] = initialTodos.toVector
 
-  //Again just returning Future.successful to avoid doing real work and keep it simple
   override def all(): Future[Seq[Todo]] = Future.successful(todos)
 
-  override def done(): Future[Seq[Todo]] = Future.successful(todos.filter(_.done))
+  override def done(): Future[Seq[Todo]] =
+    Future.successful(todos.filter(_.done))
 
-  override def pending(): Future[Seq[Todo]] = Future.successful(todos.filterNot(_.done))
+  override def pending(): Future[Seq[Todo]] =
+    Future.successful(todos.filterNot(_.done))
 
-  override def save(createTodo: CreateTodo): Future[Todo] = Future.successful{
+  override def save(createTodo: CreateTodo): Future[Todo] = Future.successful {
     val todo = Todo(
       UUID.randomUUID().toString,
       createTodo.title,
@@ -47,14 +51,14 @@ extends TodoRepository {
     todos.find(_.id == id) match {
       case Some(todoFound) =>
         val newTodo: Todo = updateHelper(todoFound, updateTodo)
-        todos = todos.map(t => if(t.id == id) newTodo else t)
+        todos = todos.map(t => if (t.id == id) newTodo else t)
         Future.successful(newTodo)
       case None =>
         Future.failed(TodoNotFound(id))
     }
   }
 
-  private def updateHelper(oldTodo: Todo, newTodo: UpdateTodo): Todo ={
+  private def updateHelper(oldTodo: Todo, newTodo: UpdateTodo): Todo = {
     val updatedTodo = oldTodo.copy(
       title = newTodo.title.getOrElse(oldTodo.title),
       description = newTodo.description.getOrElse(oldTodo.description),

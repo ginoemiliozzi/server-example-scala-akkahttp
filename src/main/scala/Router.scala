@@ -12,16 +12,15 @@ trait Router {
 }
 
 class TodoRouter(todoRepository: TodoRepository)
-  extends Router
-  with TodoDirectives
-  with ValidatorDirectives {
+    extends Router
+    with TodoDirectives
+    with ValidatorDirectives {
 
-  override def route: Route = pathPrefix("todos"){
-    pathEndOrSingleSlash{
-      get{
-        handleWithGeneric(todoRepository.all()){
-          todos =>
-            complete(todos)
+  override def route: Route = pathPrefix("todos") {
+    pathEndOrSingleSlash {
+      get {
+        handleWithGeneric(todoRepository.all()) { todos =>
+          complete(todos)
         }
       } ~ post {
         entity(as[CreateTodo]) { createTodo =>
@@ -34,31 +33,29 @@ class TodoRouter(todoRepository: TodoRepository)
       } ~ path(Segment) { id: String =>
         put {
           entity(as[UpdateTodo]) { updateTodo =>
-            validateWith(updateTodo)(UpdateTodoValidator){
+            validateWith(updateTodo)(UpdateTodoValidator) {
               handle(todoRepository.update(id, updateTodo)) {
                 case TodoRepository.TodoNotFound(_) =>
                   ApiError.updateTodoNotFound(id)
                 case _ =>
                   ApiError.generic
-              } {todo =>
+              } { todo =>
                 complete(todo)
               }
             }
           }
         }
       }
-    } ~ path("done"){
-      get{
-        handleWithGeneric(todoRepository.done()){
-          todos =>
-            complete(todos)
+    } ~ path("done") {
+      get {
+        handleWithGeneric(todoRepository.done()) { todos =>
+          complete(todos)
         }
       }
-    } ~ path("pending"){
-      get{
-        handleWithGeneric(todoRepository.pending()){
-          todos =>
-            complete(todos)
+    } ~ path("pending") {
+      get {
+        handleWithGeneric(todoRepository.pending()) { todos =>
+          complete(todos)
         }
       }
     }

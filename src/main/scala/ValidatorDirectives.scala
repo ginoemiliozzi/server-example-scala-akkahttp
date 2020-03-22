@@ -4,7 +4,7 @@ import io.circe.generic.auto._
 
 trait ValidatorDirectives extends Directives {
 
-  def validateWith[T](t: T)(validator: Validator[T]): Directive0 =
+  def validateWith[T](t: T)(implicit validator: Validator[T]): Directive0 =
     validator.validate(t) match {
       case Some(apiError) =>
         complete(apiError.statusCode, apiError.message)

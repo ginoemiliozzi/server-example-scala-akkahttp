@@ -4,12 +4,16 @@ import org.scalatest.{Matchers, WordSpec}
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
 import io.circe.generic.auto._
 
-class TodoRouterListSpec extends WordSpec with Matchers with ScalatestRouteTest with TodoMocks {
+class TodoRouterListSpec
+    extends WordSpec
+    with Matchers
+    with ScalatestRouteTest
+    with TodoMocks {
 
   private val doneTodo = Todo("1", "Do something", "Do it!", true)
   private val pendingTodo = Todo("1", "Do another thing", "Do it!", false)
 
-  private val todos = Seq(doneTodo,pendingTodo)
+  private val todos = Seq(doneTodo, pendingTodo)
 
   "TodoRouter" should {
 
@@ -57,6 +61,5 @@ class TodoRouterListSpec extends WordSpec with Matchers with ScalatestRouteTest 
       }
     }
   }
-
 
 }

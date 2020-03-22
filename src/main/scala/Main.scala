@@ -30,10 +30,10 @@ object Main extends App {
   val router = new TodoRouter(todoRepository)
   val server = new Server(router, host, port)
 
-
   val bindingFuture = server.bind()
-  bindingFuture.onComplete{
-    case Success(serverBinding) => println(s"We are online on ${serverBinding.localAddress}!")
+  bindingFuture.onComplete {
+    case Success(serverBinding) =>
+      println(s"We are online on ${serverBinding.localAddress}!")
     case Failure(e) => println(s"error: ${e.getMessage}")
   }
 
